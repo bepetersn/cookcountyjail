@@ -52,7 +52,7 @@ class TestDailyPopulationChangesApi:
 
     def test_fetch_with_nothing_stored_returns_empty_array(self):
         # Why is there a newline here?
-        expected = '[]\n'
+        expected = '[]'
         result = self.client.get(DAILY_POPULATION_API_PATH)
         assert result.status_code == 200
         assert result.data == expected
