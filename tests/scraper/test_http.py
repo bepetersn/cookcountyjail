@@ -62,3 +62,27 @@ class Test_Http:
 
         assert not okay
         assert fetched_contents == BAD_URL_NETWORK_PROBLEM
+
+    @httpretty.activate
+    def test_post_succeeds(self):
+        number_of_attempts = 2
+        expected_text = 'it worked'
+        ccj_api_requests = {'succeed-attempt': randint(1, number_of_attempts), 'current-attempt': 0}
+
+        def fulfill_ccj_api_request(_, uri, headers):
+            assert uri == INMATE_URL
+            ccj_api_requests['current-attempt'] += 1
+            if ccj_api_requests['current-attempt'] == ccj_api_requests['succeed-attempt']:
+                return 200, headers, expected_text
+            return 500, headers, 'did not work'
+
+        httpretty.register_uri(httpretty.POST, COOK_COUNTY_JAIL_INMATE_DETAILS_URL,
+                               body=fulfill_ccj_api_request)
+
+        http = Http()
+        okay, fetched_contents = http.post(INMATE_URL, {'data': {'myfakedata': 12}}, number_of_attempts)
+
+        assert okay
+        assert ccj_api_requests['current-attempt'] == ccj_api_requests['succeed-attempt']
+        assert fetched_contents == expected_text
+

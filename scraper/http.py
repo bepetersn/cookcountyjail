@@ -16,16 +16,23 @@ _STD_SLEEP_PERIODS = [1.61, 7, 13, 23, 41]
 
 class Http:
 
+    GET_REQUEST = grequests.get
+    POST_REQUEST = grequests.post
+
     def __init__(self):
         pass
 
-    def get(self, url, number_attempts=_STD_NUMBER_ATTEMPTS, initial_sleep_period=_STD_INITIAL_SLEEP_PERIOD):
+    def make_request(self, func, url, number_attempts=_STD_NUMBER_ATTEMPTS, 
+                        initial_sleep_period=_STD_INITIAL_SLEEP_PERIOD, data=None):
         attempt = 1
         sleep_period = initial_sleep_period
         while attempt <= number_attempts:
             gevent.sleep(sleep_period)
             try:
-                request = grequests.get(url)
+                if func == self.GET_REQUEST:
+                    request = func(url)
+                elif func == self.POST_REQUEST and data:
+                    request = func(url, data=data)
                 grequests.map([request])
                 if request.response is not None:
                     if request.response.status_code == requests.codes.ok:
@@ -37,6 +44,14 @@ class Http:
             sleep_period = _get_next_sleep_period(sleep_period, attempt)
             attempt += 1
         return False, {'status-code': request.response.status_code}
+
+    def get(self, url, number_attempts=_STD_NUMBER_ATTEMPTS, 
+                initial_sleep_period=_STD_INITIAL_SLEEP_PERIOD):
+        return self.make_request(self.GET_REQUEST, url, number_attempts, initial_sleep_period)
+
+    def post(self, url, data, number_attempts=_STD_NUMBER_ATTEMPTS, 
+                initial_sleep_period=_STD_INITIAL_SLEEP_PERIOD):
+        return self.make_request(self.POST_REQUEST, url, number_attempts, initial_sleep_period, data=data)
 
 
 def _get_next_sleep_period(current_sleep_period, attempt):
