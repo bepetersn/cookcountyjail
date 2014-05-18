@@ -1,7 +1,7 @@
 
 from datetime import datetime
 from pyquery import PyQuery as pq
-import hashlib
+import hashlib, json
 
 
 class InmateDetails:
@@ -89,20 +89,19 @@ class InmateDetails:
         return self.__convert_datetime(12)
 
     def to_json(self):
-        return {
+        return json.dumps({
             'hash': self.hash_id(),
             'gender': self.gender(),
-            'hash': self.hash(),
             'race': self.race(),
             'age_at_booking': self.age_at_booking(),
-            'booking_date': self.booking_date(),
+            'booking_date': self.booking_date().strftime('%Y-%m-%d'),
             'charges': self.charges(),
             'housing_location': self.housing_location(),
             'court_house_location': self.court_house_location(),
-            'next_court_date': self.next_court_date(),
+            'next_court_date': self.next_court_date().strftime('%Y-%m-%d') if self.next_court_date() else '',
             'height': self.height(),
             'weight': self.weight()
-        }
+        })
 
     def race(self):
         return self._column_content(3)
