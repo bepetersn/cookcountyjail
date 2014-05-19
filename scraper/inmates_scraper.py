@@ -4,7 +4,7 @@ from concurrent_base import ConcurrentBase
 WORKERS_TO_START = 25
 
 CCJ_INMATE_DETAILS_URL = 'http://www2.cookcountysheriff.org/search2/details.asp?jailnumber='
-CCJ_V2_API_PROCESS_URL = 'http://localhost:5000/process'
+CCJ_V2_API_PROCESS_URL = 'http://cookcountyjail.recoveredfactory.net/api/2.0/process'
 
 class InmatesScraper(ConcurrentBase):
 
