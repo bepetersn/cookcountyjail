@@ -36,7 +36,7 @@ class RawInmateData:
 
 
     def __init__(self, snap_shot_date, feature_controls, monitor):
-         if feature_controls is None:
+        if feature_controls is None:
             feature_controls = {}
         self.__klass = type(self)
         self.__klass_name = self.__klass.__name__
