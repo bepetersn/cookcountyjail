@@ -36,9 +36,9 @@ class RawInmateData:
 
 
     def __init__(self, snap_shot_date, feature_controls, monitor):
-        if feature_controls is None:
-            featu.path
-            ass = type(self)
+         if feature_controls is None:
+            feature_controls = {}
+        self.__klass = type(self)
         self.__klass_name = self.__klass.__name__
         self.__monitor = monitor
         self.__snap_shot_date = snap_shot_date
@@ -88,6 +88,7 @@ class RawInmateData:
         return [d.text_content()[:-4] for d in dates]
 
     def add(self, inmate_details):
+        """ Add an inmate record to the account of raw csv data. """
         if not self.__feature_activated:
             return
         if self.__build_file_writer is None:
@@ -152,6 +153,8 @@ class RawInmateData:
         return self.__snap_shot_date.strftime('%Y-%m-%d.csv')
 
     def finish(self):
+        """ Method to be called when the build file containing the raw inmate data
+            is completed. Moves that file into the release directory. """
         if not self.__feature_activated:
             return
         self.__build_file.close()
